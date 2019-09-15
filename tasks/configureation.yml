@@ -1,0 +1,64 @@
+---
+- name: Create StackStorm system user.
+  user:
+    name: '{{ st2_system_user }}'
+    home: '/home/{{ st2_user }}'
+    generate_ssh_key: 'yes'
+    ssh_key_file: '/home/{{ st2_user }}/.ssh/{{ st2_user }}_rsa'
+
+- name: Replace StackStorm system user public key.
+  template:
+    src: 'stanley_rsa.pub.j2'
+    dest: '/home/{{ st2_user }}/.ssh/{{ st2_user }}_rsa.pub'
+    owner: '{{ st2_user }}'
+    group: '{{ st2_user }}'
+    mode: '644'
+
+- name: Configuring StackStorm user public key-based SSH access.
+  become: 'yes'
+  become_user: '{{ st2_user }}'
+  authorized_key:
+    user: '{{ st2_user }}'
+    key: '{{ st2_user_public_key }}'
+
+- name: Add StackStorm system user to sudo passwordless.
+  template:
+    src: 'st2.j2'
+    dest: '/etc/sudoers.d/st2'
+    owner: 'root'
+    group: 'root'
+    mode: '0440'
+    validate: 'visudo -cf %s'
+
+- name: Disable sudoers requiretty.
+  replace:
+    dest: '/etc/sudoers'
+    regexp: '^Defaults\s+\+?requiretty'
+    replace: '# Defaults requiretty'
+
+- name: StackStorm server configuration.
+  template:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    backup: 'yes'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  loop: '{{ st2_conf_scripts }}'
+  register: st2_conf
+
+- name: Configure authentication.
+  htpasswd:
+    path: '/etc/st2/htpasswd'
+    name: '{{ st2_auth_username }}'
+    password: '{{ st2_auth_password }}'
+
+- name: Setup mistral DB tables.
+  shell: '/opt/stackstorm/mistral/bin/mistral-db-manage --config-file /etc/mistral/mistral.conf upgrade head && touch /etc/mistral/mistral-db-manage.upgrade.head.ansible.has.run'
+  args:
+    creates: '/etc/mistral/mistral-db-manage.upgrade.head.run'
+
+- name: Register mistral actions.
+  shell: '/opt/stackstorm/mistral/bin/mistral-db-manage --config-file /etc/mistral/mistral.conf populate | grep -v -e openstack -e keystone -e ironicclient && touch /etc/mistral/mistral-db-manage.populate.ansible.has.run'
+  args:
+    creates: '/etc/mistral/mistral-db-manage.populate.run'

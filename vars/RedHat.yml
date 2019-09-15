@@ -1,0 +1,18 @@
+---
+nodejs_repo_name: 'nodejs'
+nodejs_repo_url: 'http://mirrors.tuna.tsinghua.edu.cn/nodesource/rpm_10.x/el/{{ ansible_distribution_major_version }}/{{ ansible_architecture }}/'
+nodejs_packages:
+  - 'nodejs'
+
+st2_repo_name: 'StackStorm'
+st2_repo_url: 'http://cache.omygods.com/StackStorm/el{{ ansible_distribution_major_version }}'
+st2_packages:
+  - 'st2-{{ st2_version }}'
+  - 'st2mistral-{{ st2_version }}'
+  - 'st2chatops-{{ st2_version }}'
+
+st2_dependent_packages:
+  - 'crudini'
+  - 'policycoreutils-python'
+  - 'python-passlib'
+  - 'httpd-tools'

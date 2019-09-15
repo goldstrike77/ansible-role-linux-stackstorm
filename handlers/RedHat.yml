@@ -1,0 +1,9 @@
+---
+- name: Enable StackStorm service
+  systemd:
+    name: '{{ item }}.service'
+    enabled: 'yes'
+    state: 'restarted'
+    daemon_reload: 'yes'
+  loop: '{{ st2_services }}'
+  listen: Ensure StackStorm service is enabled

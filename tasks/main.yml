@@ -1,2 +1,24 @@
 ---
-# tasks file for ansible-role-linux-stackstorm
+- name: Include tasks for specific OS.
+  include: '{{ ansible_os_family }}.yml'
+
+- name: Straight to getenforce selinux status.
+  include: 'selinux.yml'
+
+- name: Include firewall tasks
+  include: 'firewall.yml'
+
+- name: Configure the StackStorm datastore
+  include: 'datastore.yml'
+
+- name: Configuration the StackStorm.
+  include: 'configureation.yml'
+
+- name: Reload the StackStorm service
+  shell: echo ''
+  notify: 'Ensure StackStorm service is enabled'
+  when:
+    - st2_conf is changed or st2_update is changed
+
+- name: Force the handler to run immediately.
+  meta: flush_handlers

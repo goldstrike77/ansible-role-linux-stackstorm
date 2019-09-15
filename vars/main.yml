@@ -1,2 +1,19 @@
 ---
-# vars file for ansible-role-linux-stackstorm
+st2_conf_scripts:
+  - { src: 'mistral.conf.j2', dest: '/etc/mistral/mistral.conf' }
+  - { src: 'st2.conf.j2', dest: '/etc/st2/st2.conf' }
+
+st2_services:
+  - 'mistral-api'
+  - 'mistral-server'
+  - 'mistral'
+  - 'st2actionrunner'
+  - 'st2api'
+  - 'st2auth'
+  - 'st2chatops'
+  - 'st2garbagecollector'
+  - 'st2notifier'
+  - 'st2resultstracker'
+  - 'st2rulesengine'
+  - 'st2sensorcontainer'
+  - 'st2stream'

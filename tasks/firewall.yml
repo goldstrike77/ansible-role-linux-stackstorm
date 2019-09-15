@@ -1,0 +1,16 @@
+---
+- name: Gathering service facts.
+  service_facts:
+  register: services_state
+
+- name: Allow StackStorm service port.
+  firewalld:
+    port: '{{ item.value }}/tcp'
+    zone: 'public'
+    permanent: 'true'
+    immediate: 'true'
+    state: 'enabled'
+  with_dict:
+    - '{{ st2_port }}'
+  when:
+    - services_state.ansible_facts.services["firewalld.service"].state == 'running'

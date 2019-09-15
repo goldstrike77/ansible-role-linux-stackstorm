@@ -3,7 +3,7 @@
 [api]
 # Host and port to bind the API server.
 host = 127.0.0.1
-port = 9101
+port = {{ st2_port.api }}
 logging = /etc/st2/logging.api.gunicorn.conf
 mask_secrets = True
 # allow_origin is required for handling CORS in st2 web UI.
@@ -39,10 +39,10 @@ logging = /etc/st2/logging.timersengine.conf
 
 [auth]
 host = 127.0.0.1
-port = 9100
+port = {{ st2_port.auth }}
 use_ssl = False
 debug = False
-enable = False
+enable = True
 logging = /etc/st2/logging.auth.gunicorn.conf
 
 mode = standalone
@@ -72,8 +72,8 @@ redirect_stderr = False
 mask_secrets = True
 
 [system_user]
-user = stanley
-ssh_key_file = /home/stanley/.ssh/stanley_rsa
+user = {{ st2_user }}
+ssh_key_file = /home/{{ st2_user }}/.ssh/{{ st2_user }}_rsa
 
 [messaging]
 url = amqp://st2:password@10.101.4.38:5672/
@@ -89,3 +89,6 @@ logging = /etc/st2/logging.scheduler.conf
 
 [database]
 host = mongodb://st2:password@10.101.4.38:27017/st2
+
+[keyvalue]
+encryption_key_path = /etc/st2/keys

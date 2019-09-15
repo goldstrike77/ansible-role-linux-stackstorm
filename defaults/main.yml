@@ -1,2 +1,15 @@
 ---
-# defaults file for ansible-role-linux-stackstorm
+# General parameters #
+st2_is_install: false # A boolean value, whether install the StackStorm.
+st2_version: '3.1.0' # Specify the StackStorm version.
+st2_selinux: false # SELinux security policy.
+st2_user: 'stanley' # Define StackStorm system user.
+st2_user_public_key: 'AAAAB3NzaC1yc2EAAAADAQABAAAAgQCRj6LOft/v/xJvuWAOy9xApfRGf/V0rjRe2w9f1vySNP/Uj1vQinOzAoif4Q59gikc8xMuBzHEfYEKQAALrbRP/rB1F7FOT5kvu3z2zQqDVRQ9aRG5YUR3mzEY3PENGXhHhFI6vnqXIBxnmboyK/A8YVBXaxfU1mi7cSqrQ42lVw=='
+st2_auth_username: 'st2admin'
+st2_auth_password: 'changeme'
+
+# Listen port #
+st2_port: # StackStorm server listen.
+  auth: '29100'
+  api: '29101'
+  stream: '29102'

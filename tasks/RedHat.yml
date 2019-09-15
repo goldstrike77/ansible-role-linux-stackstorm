@@ -1,0 +1,57 @@
+---
+- name: Include OS-specific variables.
+  include_vars: '{{ ansible_os_family }}.yml'
+
+- name: Install the StackStorm dependencies packages.
+  yum:
+    name: '{{ st2_dependent_packages }}'
+    state: 'present'
+    validate_certs: 'no'
+    disable_gpg_check: 'yes'
+    update_cache: 'yes'
+  register: yum_status
+  until: yum_status is succeeded
+  retries: 3
+  delay: 5
+
+- name: Add nodejs YUM repositories.
+  yum_repository:
+    name: '{{ nodejs_repo_name }}'
+    description: '{{ nodejs_repo_name }} YUM repository'
+    file: '{{ nodejs_repo_name }}'
+    baseurl: '{{ nodejs_repo_url }}'
+    gpgcheck: 'no'
+    timeout: '60'
+
+- name: Install the StackStorm ChatOps dependencies packages.
+  yum:
+    name: '{{ nodejs_packages }}'
+    state: 'present'
+    validate_certs: 'no'
+    disable_gpg_check: 'yes'
+    update_cache: 'yes'
+  register: yum_status
+  until: yum_status is succeeded
+  retries: 3
+  delay: 5
+
+- name: Add StackStorm YUM repositories.
+  yum_repository:
+    name: '{{ st2_repo_name }}'
+    description: '{{ st2_repo_name }} YUM repository'
+    file: '{{ st2_repo_name }}'
+    baseurl: '{{ st2_repo_url }}'
+    gpgcheck: 'no'
+    timeout: '60'
+
+- name: Install the StackStorm packages.
+  yum:
+    name: '{{ st2_packages }}'
+    state: 'present'
+    validate_certs: 'no'
+    disable_gpg_check: 'yes'
+    update_cache: 'yes'
+  register: st2_update
+  until: st2_update is succeeded
+  retries: 3
+  delay: 5
