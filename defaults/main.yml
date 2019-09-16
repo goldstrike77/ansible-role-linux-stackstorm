@@ -4,12 +4,82 @@ st2_is_install: false # A boolean value, whether install the StackStorm.
 st2_version: '3.1.0' # Specify the StackStorm version.
 st2_selinux: false # SELinux security policy.
 st2_user: 'stanley' # Define StackStorm system user.
-st2_user_public_key: 'AAAAB3NzaC1yc2EAAAADAQABAAAAgQCRj6LOft/v/xJvuWAOy9xApfRGf/V0rjRe2w9f1vySNP/Uj1vQinOzAoif4Q59gikc8xMuBzHEfYEKQAALrbRP/rB1F7FOT5kvu3z2zQqDVRQ9aRG5YUR3mzEY3PENGXhHhFI6vnqXIBxnmboyK/A8YVBXaxfU1mi7cSqrQ42lVw=='
-st2_auth_username: 'st2admin'
-st2_auth_password: 'changeme'
+st2_auth_user: 'st2admin' # File-based authentication username.
+st2_auth_pass: 'changeme' # File-based authentication password.
+st2_cluster: 'st2' # Cluster name of servers that implements distribution performance.
+st2_path: '/data' # This directory is used to store state.
 
 # Listen port #
 st2_port: # StackStorm server listen.
   auth: '29100'
   api: '29101'
+  mistral: '28989'
   stream: '29102'
+
+# Role dependencies #
+st2_mongod_dept: false # A boolean value, whether MongoDB database use the same environment.
+st2_pgsql_dept: false # A boolean value, whether PostgreSQL database use the same environment.
+st2_rabbitmq_dept: false # A boolean value, whether RabbitMQ use the same environment.
+st2_ngx_dept: false # A boolean value, whether proxy web interface and API traffic using NGinx.
+
+# MongoDB parameters #
+st2_mongod_auth: true # A boolean value, Enable or Disable MongoDB authentication.
+st2_mongod_hosts: # Group of MongoDB hosts StackStorm should connect to.
+  - '127.0.0.1'
+st2_mongod_node_role: 'replica' # Member role for ReplicaSet.
+st2_mongod_path: '{{ st2_path }}' # Specify the MongoDB data directory.
+st2_mongod_port: '27017' # The MongoDB instance port.
+st2_mongod_replset: '{{ st2_cluster }}' # MongoDB ReplicaSet name.
+st2_mongod_sa_pass: 'changeme' # MongoDB Superuser password.
+st2_mongod_sa_user: 'sa' # MongoDB Superuser name.
+st2_mongod_user: 'st2' # MongoDB username.
+st2_mongod_pass: 'changeme' # MongoDB password.
+st2_mongod_version: '34' # Specify the MongoDB version, minimum 34.
+
+# PostgreSQL parameters #
+st2_pgsql_host: '{{ ansible_default_ipv4.address }}' # PostgreSQL instance communication address.
+st2_pgsql_mailto: 'somebody@example.com' # PostgreSQL report mail recipient.
+st2_pgsql_path: '{{ st2_path }}' # Specify the PostgreSQL data directory.
+st2_pgsql_port: '5432' # PostgreSQL instance communication ports.
+st2_pgsql_sa_pass: 'changeme' # PostgreSQL root account password.
+st2_pgsql_backupset_arg:
+  keep: '2' # The number of full backups (and its incrementals) to keep.
+  encryptkey: 'DfqaO09ybWcme77rgoImSVq1UB9PO1al' 
+st2_pgsql_bu_dbs_arg: # StackStorm Database Variables.
+  - dbs: 'mistral'
+    user: 'mistral'
+    pass: 'changeme'
+    priv: 'ALL'
+    role: 'SUPERUSER'
+    net: '{{ st2_pgsql_host }}/32'
+
+# RabbitMQ parameters #
+st2_rabbitmq_host: '{{ ansible_default_ipv4.address }}' # RabbitMQ instance communication address.
+st2_rabbitmq_path: '{{ st2_path }}'
+st2_rabbitmq_bu_arg:
+  - vhost: '/'
+    user: 'st2'
+    pass: 'changeme'
+    read_priv: '.*'
+    write_priv: '.*'
+    configure_priv: '.*'
+    tags: 'StackStorm'
+st2_rabbitmq_port: # RabbitMQ server listen.
+  epmd: '4369'
+  erlang_dist_client: '35672-35682'
+  erlang_dist_server: '25672'
+  exporter: '9419'
+  http: '15672'
+  ssl: '5671'
+  tcp: '5672'
+
+# NGinx parameters #
+st2_ngx_block_agents: true # Enables or disables block unsafe User Agents.
+st2_ngx_block_string: true # Enables or disables block includes Exploits / File injections / Spam / SQL injections.
+st2_ngx_compress: true # Enables or disables compression.
+st2_ngx_domain: 'st2.example.com' # Defines domain name.
+st2_ngx_pagespeed: true # Enables or disables pagespeed modules.
+st2_ngx_port_http: '80' # NGinx HTTP listen port.
+st2_ngx_port_https: '443' # NGinx HTTPs listen port.
+st2_ngx_ssl_protocols: 'modern' # intermediate or modern, defines SSL protocol profile.
+st2_ngx_version: 'extras' # extras or standard

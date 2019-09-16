@@ -1,6 +1,6 @@
 ---
 - name: Make StackStorm encryption keys directory.
-  become: yes
+  become: 'yes'
   file:
     path: '/etc/st2/keys'
     state: 'directory'
@@ -8,12 +8,18 @@
     owner: 'root'
     group: 'st2'
 
+- name: Check if StackStorm encryption keys exists.
+  stat:
+    path: '/etc/st2/keys/datastore_key.json'
+  register: result
+
 - name: Generate StackStorm crypto key.
-  become: yes
-  command: 'st2-generate-symmetric-crypto-key --key-path /etc/st2/keys'
+  become: 'yes'
+  command: 'st2-generate-symmetric-crypto-key --key-path /etc/st2/keys/datastore_key.json'
+  when: not result.stat.exists | bool
 
 - name: Set permissions on datastore encryption key.
-  become: yes
+  become: 'yes'
   file:
     path: '/etc/st2/keys/datastore_key.json'
     mode: '0640'

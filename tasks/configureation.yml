@@ -1,25 +1,21 @@
 ---
 - name: Create StackStorm system user.
   user:
-    name: '{{ st2_system_user }}'
+    name: '{{ st2_user }}'
     home: '/home/{{ st2_user }}'
     generate_ssh_key: 'yes'
+    ssh_key_comment: 'ansible-generated on {{ st2_user }}'
+    ssh_key_type: 'rsa'
+    ssh_key_bits: '2048'
     ssh_key_file: '/home/{{ st2_user }}/.ssh/{{ st2_user }}_rsa'
-
-- name: Replace StackStorm system user public key.
-  template:
-    src: 'stanley_rsa.pub.j2'
-    dest: '/home/{{ st2_user }}/.ssh/{{ st2_user }}_rsa.pub'
-    owner: '{{ st2_user }}'
-    group: '{{ st2_user }}'
-    mode: '644'
+  register: result
 
 - name: Configuring StackStorm user public key-based SSH access.
   become: 'yes'
   become_user: '{{ st2_user }}'
   authorized_key:
     user: '{{ st2_user }}'
-    key: '{{ st2_user_public_key }}'
+    key: "{{ result.ssh_public_key }}"
 
 - name: Add StackStorm system user to sudo passwordless.
   template:
@@ -50,8 +46,8 @@
 - name: Configure authentication.
   htpasswd:
     path: '/etc/st2/htpasswd'
-    name: '{{ st2_auth_username }}'
-    password: '{{ st2_auth_password }}'
+    name: '{{ st2_auth_user }}'
+    password: '{{ st2_auth_pass }}'
 
 - name: Setup mistral DB tables.
   shell: '/opt/stackstorm/mistral/bin/mistral-db-manage --config-file /etc/mistral/mistral.conf upgrade head && touch /etc/mistral/mistral-db-manage.upgrade.head.ansible.has.run'
@@ -62,3 +58,20 @@
   shell: '/opt/stackstorm/mistral/bin/mistral-db-manage --config-file /etc/mistral/mistral.conf populate | grep -v -e openstack -e keystone -e ironicclient && touch /etc/mistral/mistral-db-manage.populate.ansible.has.run'
   args:
     creates: '/etc/mistral/mistral-db-manage.populate.run'
+
+- name: StackStorm systemd service configuration.
+  template:
+    src: '{{ item }}.j2'
+    dest: '/lib/systemd/system/{{ item }}'
+    backup: 'yes'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  loop:
+    - 'st2stream.socket'
+    - 'st2stream.service'
+    - 'st2auth.socket'
+    - 'st2auth.service'
+    - 'st2api.socket'
+    - 'st2api.service'
+    - 'mistral-api.service'

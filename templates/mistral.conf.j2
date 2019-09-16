@@ -171,7 +171,7 @@
 # configuration. If not set, we fall back to the rpc_backend option
 # and driver specific configuration. (string value)
 #transport_url = <None>
-transport_url = rabbit://st2:password@10.101.4.38:5672
+transport_url = rabbit://{{ st2_rabbitmq_bu_arg[0].user }}:{{ st2_rabbitmq_bu_arg[0].pass }}@{{ st2_rabbitmq_host }}:{{ st2_rabbitmq_port.tcp }}/
 
 # The messaging driver to use, defaults to rabbit. Other drivers
 # include qpid and zmq. (string value)
@@ -190,10 +190,10 @@ transport_url = rabbit://st2:password@10.101.4.38:5672
 #
 
 # Mistral API server host (string value)
-#host = 0.0.0.0
+host = 0.0.0.0
 
 # Mistral API server port (integer value)
-#port = 8989
+port = {{ st2_port.mistral }}
 
 
 [coordination]
@@ -234,7 +234,7 @@ transport_url = rabbit://st2:password@10.101.4.38:5672
 # Deprecated group/name - [DATABASE]/sql_connection
 # Deprecated group/name - [sql]/connection
 #connection = <None>
-connection = postgresql+psycopg2://mistral:password@10.101.4.38/mistral
+connection = postgresql+psycopg2://{{ st2_pgsql_bu_dbs_arg[0].user | default('mistral') }}:{{ st2_pgsql_bu_dbs_arg[0].pass }}@{{ st2_pgsql_host | default('127.0.0.1') }}:{{ st2_pgsql_port | default('5432') }}/{{ st2_pgsql_bu_dbs_arg[0].dbs | default('mistral') }}
 
 # The SQLAlchemy connection string to use to connect to the slave
 # database. (string value)
@@ -654,11 +654,11 @@ max_pool_size = 50
 
 # Qpid broker hostname. (string value)
 # Deprecated group/name - [DEFAULT]/qpid_hostname
-#qpid_hostname = 127.0.0.1
+qpid_hostname = {{ st2_rabbitmq_host }}
 
 # Qpid broker port. (integer value)
 # Deprecated group/name - [DEFAULT]/qpid_port
-#qpid_port = 5672
+qpid_port = {{ st2_rabbitmq_port.tcp }}
 
 # Qpid HA cluster host:port pairs. (list value)
 # Deprecated group/name - [DEFAULT]/qpid_hosts
@@ -666,11 +666,11 @@ max_pool_size = 50
 
 # Username for Qpid connection. (string value)
 # Deprecated group/name - [DEFAULT]/qpid_username
-#qpid_username =
+qpid_username = {{ st2_rabbitmq_bu_arg[0].user }}
 
 # Password for Qpid connection. (string value)
 # Deprecated group/name - [DEFAULT]/qpid_password
-#qpid_password =
+qpid_password = {{ st2_rabbitmq_bu_arg[0].pass }}
 
 # Space separated list of SASL mechanisms to use for auth. (string
 # value)
@@ -760,12 +760,12 @@ max_pool_size = 50
 # The RabbitMQ broker address where a single node is used. (string
 # value)
 # Deprecated group/name - [DEFAULT]/rabbit_host
-#rabbit_host = 127.0.0.1
+rabbit_host = {{ st2_rabbitmq_host }}
 
 # The RabbitMQ broker port where a single node is used. (integer
 # value)
 # Deprecated group/name - [DEFAULT]/rabbit_port
-#rabbit_port = 5672
+rabbit_port = {{ st2_rabbitmq_port.tcp }}
 
 # RabbitMQ HA cluster host:port pairs. (list value)
 # Deprecated group/name - [DEFAULT]/rabbit_hosts
@@ -777,11 +777,11 @@ max_pool_size = 50
 
 # The RabbitMQ userid. (string value)
 # Deprecated group/name - [DEFAULT]/rabbit_userid
-#rabbit_userid = guest
+rabbit_userid = {{ st2_rabbitmq_bu_arg[0].user }}
 
 # The RabbitMQ password. (string value)
 # Deprecated group/name - [DEFAULT]/rabbit_password
-#rabbit_password = guest
+rabbit_password = {{ st2_rabbitmq_bu_arg[0].pass }}
 
 # The RabbitMQ login method. (string value)
 # Deprecated group/name - [DEFAULT]/rabbit_login_method
@@ -789,7 +789,7 @@ max_pool_size = 50
 
 # The RabbitMQ virtual host. (string value)
 # Deprecated group/name - [DEFAULT]/rabbit_virtual_host
-#rabbit_virtual_host = /
+rabbit_virtual_host = {{ st2_rabbitmq_bu_arg[0].vhost }}
 
 # How frequently to retry connecting with RabbitMQ. (integer value)
 #rabbit_retry_interval = 1

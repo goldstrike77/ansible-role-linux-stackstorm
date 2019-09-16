@@ -1,4 +1,10 @@
 ---
+- name: Sets MongoDB node variables for Cluster
+  set_fact:
+    st2_mongod_hosts: '{{ st2_servers }}'
+  when:
+    - st2_mongod_dept | bool
+
 - name: Include tasks for specific OS.
   include: '{{ ansible_os_family }}.yml'
 

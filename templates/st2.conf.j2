@@ -76,7 +76,7 @@ user = {{ st2_user }}
 ssh_key_file = /home/{{ st2_user }}/.ssh/{{ st2_user }}_rsa
 
 [messaging]
-url = amqp://st2:password@10.101.4.38:5672/
+url = amqp://{{ st2_rabbitmq_bu_arg[0].user }}:{{ st2_rabbitmq_bu_arg[0].pass }}@{{ st2_rabbitmq_host }}:{{ st2_rabbitmq_port.tcp }}/
 
 [ssh_runner]
 remote_dir = /tmp
@@ -88,7 +88,7 @@ logging = /etc/st2/logging.workflowengine.conf
 logging = /etc/st2/logging.scheduler.conf
 
 [database]
-host = mongodb://st2:password@10.101.4.38:27017/st2
+host = mongodb://{% if st2_mongod_auth %}{{ st2_mongod_user }}:{{ st2_mongod_pass | urlencode }}@{% endif %}{{ st2_mongod_hosts | list | join(",") }}:{{ st2_mongod_port }}/ST2{% if ( st2_mongod_replset is defined ) and ( st2_servers|length is not divisibleby 2 ) and ( st2_servers|length > 2 ) %}?replicaSet={{ st2_mongod_replset | default("ST2") | upper }}{% endif %}
 
 [keyvalue]
-encryption_key_path = /etc/st2/keys
+encryption_key_path = /etc/st2/keys/datastore_key.json

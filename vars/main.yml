@@ -1,4 +1,16 @@
 ---
+st2_servers: "\
+  {% set _st2_servers = [] %}\
+  {% for host in groups[group_names[-1]] %}\
+    {% if hostvars[host]['st2_cluster'] is defined %}\
+      {% set _st2_cluster = hostvars[host]['st2_cluster'] | default('') %}\
+      {% if ( _st2_cluster == hostvars[host]['st2_cluster']) %}\
+        {% if _st2_servers.append(hostvars[host]['ansible_host']) %}{% endif %}\
+      {% endif %}\
+    {% endif %}\
+  {% endfor %}\
+  {{ _st2_servers }}"
+
 st2_conf_scripts:
   - { src: 'mistral.conf.j2', dest: '/etc/mistral/mistral.conf' }
   - { src: 'st2.conf.j2', dest: '/etc/st2/st2.conf' }
