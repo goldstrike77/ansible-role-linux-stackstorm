@@ -92,3 +92,8 @@ host = mongodb://{% if st2_mongod_auth %}{{ st2_mongod_user }}:{{ st2_mongod_pas
 
 [keyvalue]
 encryption_key_path = /etc/st2/keys/datastore_key.json
+
+[metrics]
+driver = statsd
+host = {{ ansible_default_ipv4.address }}
+port = {{ st2_port.metrics }}

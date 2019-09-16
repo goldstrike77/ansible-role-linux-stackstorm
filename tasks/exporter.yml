@@ -1,0 +1,38 @@
+---
+- name: Add statsd exporter YUM repositories
+  yum_repository:
+    name: '{{ st2_exporter_repo_name }}'
+    description: '{{ st2_exporter_repo_name }} YUM repository'
+    file: '{{ st2_exporter_repo_name }}'
+    baseurl: '{{ st2_exporter_repo_url }}'
+    gpgcheck: 'no'
+    timeout: '60'
+
+- name: Install the statsd exporter
+  yum:
+    name: '{{ st2_exporter_software }}'
+    state: 'present'
+    validate_certs: 'no'
+    disable_gpg_check: 'yes'
+  register: st2_exporter_soft_updated
+  until: st2_exporter_soft_updated is succeeded
+  retries: 3
+  delay: 5
+
+- name: Statsd exporter configure file transfer
+  template:
+    src: 'statsd_exporter.j2'
+    dest: '/etc/default/statsd_exporter'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  register: st2_exporter_soft_config
+
+- name: Reloading the Statsd exporter service
+  systemd:
+    name: 'statsd_exporter.service'
+    enabled: 'yes'
+    state: 'restarted'
+    daemon_reload: 'yes'
+  when:
+    - st2_exporter_soft_updated is changed or st2_exporter_soft_config is change

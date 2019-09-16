@@ -1,0 +1,1 @@
+STATSD_EXPORTER_OPTS='--log.format="logger:syslog?appname=statsd_exporter&local=7" --web.listen-address=":{{ st2_port.exporter }}" --statsd.listen-tcp=":{{ st2_port.metrics }}"'

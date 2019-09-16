@@ -14,6 +14,16 @@
 - name: Include firewall tasks
   include: 'firewall.yml'
 
+- name: Installation the prometheus statsd exporter
+  include: 'exporter.yml'
+  when: exporter_is_install | bool
+
+- name: Registered with HashiCorp Consul
+  include: 'register.yml'
+  when:
+    - exporter_is_install | bool
+    - consul_public_register | bool
+
 - name: Configure the StackStorm datastore
   include: 'datastore.yml'
 
