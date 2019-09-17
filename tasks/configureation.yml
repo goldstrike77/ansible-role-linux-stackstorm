@@ -1,20 +1,20 @@
 ---
 - name: Create StackStorm system user.
   user:
-    name: '{{ st2_user }}'
-    home: '/home/{{ st2_user }}'
+    name: '{{ st2_sys_user }}'
+    home: '/home/{{ st2_sys_user }}'
     generate_ssh_key: 'yes'
-    ssh_key_comment: 'ansible-generated on {{ st2_user }}'
+    ssh_key_comment: 'ansible-generated on {{ st2_sys_user }}'
     ssh_key_type: 'rsa'
-    ssh_key_bits: '2048'
-    ssh_key_file: '/home/{{ st2_user }}/.ssh/{{ st2_user }}_rsa'
+    ssh_key_bits: '1024'
+    ssh_key_file: '/home/{{ st2_sys_user }}/.ssh/{{ st2_sys_user }}_rsa'
   register: result
 
 - name: Configuring StackStorm user public key-based SSH access.
   become: 'yes'
-  become_user: '{{ st2_user }}'
+  become_user: '{{ st2_sys_user }}'
   authorized_key:
-    user: '{{ st2_user }}'
+    user: '{{ st2_sys_user }}'
     key: "{{ result.ssh_public_key }}"
 
 - name: Add StackStorm system user to sudo passwordless.
@@ -49,15 +49,23 @@
     name: '{{ st2_auth_user }}'
     password: '{{ st2_auth_pass }}'
 
+- name: Check Mistral DB tables setup
+  stat:
+    path: '/etc/mistral/mistral-db-manage.upgrade.head.ansible.has.run'
+  register: check_mistral_tables_setup
+
 - name: Setup mistral DB tables.
   shell: '/opt/stackstorm/mistral/bin/mistral-db-manage --config-file /etc/mistral/mistral.conf upgrade head && touch /etc/mistral/mistral-db-manage.upgrade.head.ansible.has.run'
-  args:
-    creates: '/etc/mistral/mistral-db-manage.upgrade.head.run'
+  when: not check_mistral_tables_setup.stat.exists | bool
+
+- name: Check Mistral register actions
+  stat:
+    path: '/etc/mistral/mistral-db-manage.populate.ansible.has.run'
+  register: check_mistral_register_actions
 
 - name: Register mistral actions.
-  shell: '/opt/stackstorm/mistral/bin/mistral-db-manage --config-file /etc/mistral/mistral.conf populate | grep -v -e openstack -e keystone -e ironicclient && touch /etc/mistral/mistral-db-manage.populate.ansible.has.run'
-  args:
-    creates: '/etc/mistral/mistral-db-manage.populate.run'
+  shell: '/opt/stackstorm/mistral/bin/mistral-db-manage --config-file /etc/mistral/mistral.conf populate && touch /etc/mistral/mistral-db-manage.populate.ansible.has.run'
+  when: not check_mistral_register_actions.stat.exists | bool
 
 - name: StackStorm systemd service configuration.
   template:

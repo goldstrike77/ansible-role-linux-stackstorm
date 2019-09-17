@@ -21,6 +21,8 @@ logging = /etc/st2/logging.rulesengine.conf
 [actionrunner]
 logging = /etc/st2/logging.actionrunner.conf
 virtualenv_opts =
+workflows_pool_size = {{ ansible_processor_vcpus * 10 }}
+actions_pool_size = {{ ansible_processor_vcpus * 15 }}
 
 [resultstracker]
 logging = /etc/st2/logging.resultstracker.conf
@@ -61,10 +63,10 @@ base_path = /opt/stackstorm
 # webui_base_url = https://mywebhost.domain
 
 [syslog]
-host = 127.0.0.1
-port = 514
+host = {{ st2_syslog_server | list | random(seed=inventory_hostname) }}
+port = {{ st2_syslog_port }}
 facility = local7
-protocol = udp
+protocol = {{ st2_syslog_protocol }}
 
 [log]
 excludes = requests,paramiko
@@ -72,8 +74,8 @@ redirect_stderr = False
 mask_secrets = True
 
 [system_user]
-user = {{ st2_user }}
-ssh_key_file = /home/{{ st2_user }}/.ssh/{{ st2_user }}_rsa
+user = {{ st2_sys_user }}
+ssh_key_file = /home/{{ st2_sys_user }}/.ssh/{{ st2_sys_user }}_rsa
 
 [messaging]
 url = amqp://{{ st2_rabbitmq_bu_arg[0].user }}:{{ st2_rabbitmq_bu_arg[0].pass }}@{{ st2_rabbitmq_host }}:{{ st2_rabbitmq_port.tcp }}/
@@ -89,6 +91,7 @@ logging = /etc/st2/logging.scheduler.conf
 
 [database]
 host = mongodb://{% if st2_mongod_auth %}{{ st2_mongod_user }}:{{ st2_mongod_pass | urlencode }}@{% endif %}{{ st2_mongod_hosts | list | join(",") }}:{{ st2_mongod_port }}/ST2{% if ( st2_mongod_replset is defined ) and ( st2_servers|length is not divisibleby 2 ) and ( st2_servers|length > 2 ) %}?replicaSet={{ st2_mongod_replset | default("ST2") | upper }}{% endif %}
+
 
 [keyvalue]
 encryption_key_path = /etc/st2/keys/datastore_key.json

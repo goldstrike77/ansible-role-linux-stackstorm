@@ -3,7 +3,7 @@
 st2_is_install: false # A boolean value, whether install the StackStorm.
 st2_version: '3.1.0' # Specify the StackStorm version.
 st2_selinux: false # SELinux security policy.
-st2_user: 'stanley' # Define StackStorm system user.
+st2_sys_user: 'stanley' # Define StackStorm system user.
 st2_auth_user: 'st2admin' # File-based authentication username.
 st2_auth_pass: 'changeme' # File-based authentication password.
 st2_cluster: 'st2' # Cluster name of servers that implements distribution performance.
@@ -17,6 +17,12 @@ st2_port: # StackStorm server listen.
   metrics: '9125'
   mistral: '28989'
   stream: '29102'
+
+# Log Variables #
+st2_syslog_port: '1514' # Defines the input port of a syslog server for log.
+st2_syslog_protocol: 'udp' # Defines the input protocol of a syslog server for log.
+st2_syslog_server: # Defines the address list of a syslog server.
+  - '127.0.0.1'
 
 # Role dependencies #
 st2_mongod_dept: false # A boolean value, whether MongoDB database use the same environment.
