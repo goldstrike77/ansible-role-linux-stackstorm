@@ -22,7 +22,6 @@ st2_services:
   - 'st2actionrunner'
   - 'st2api'
   - 'st2auth'
-  - 'st2chatops'
   - 'st2garbagecollector'
   - 'st2notifier'
   - 'st2resultstracker'

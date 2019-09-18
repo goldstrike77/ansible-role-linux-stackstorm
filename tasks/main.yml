@@ -38,3 +38,6 @@
 
 - name: Force the handler to run immediately.
   meta: flush_handlers
+
+- name: ChatOps operations
+  include: 'chatops.yml'

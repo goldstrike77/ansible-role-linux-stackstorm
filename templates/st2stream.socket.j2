@@ -3,7 +3,7 @@ Description=StackStorm st2stream Socket
 PartOf=st2stream.service
 
 [Socket]
-ListenStream=127.0.0.1:{{ st2_port.stream }}
+ListenStream={{ ansible_default_ipv4.address }}:{{ st2_port.stream }}
 
 [Install]
 WantedBy=sockets.target

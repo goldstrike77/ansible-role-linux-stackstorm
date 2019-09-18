@@ -2,7 +2,7 @@
 
 [api]
 # Host and port to bind the API server.
-host = 127.0.0.1
+host = {{ ansible_default_ipv4.address }}
 port = {{ st2_port.api }}
 logging = /etc/st2/logging.api.gunicorn.conf
 mask_secrets = True
@@ -40,7 +40,7 @@ logging = /etc/st2/logging.garbagecollector.conf
 logging = /etc/st2/logging.timersengine.conf
 
 [auth]
-host = 127.0.0.1
+host = {{ ansible_default_ipv4.address }}
 port = {{ st2_port.auth }}
 use_ssl = False
 debug = False

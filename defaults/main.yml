@@ -92,6 +92,10 @@ st2_ngx_port_https: '443' # NGinx HTTPs listen port.
 st2_ngx_ssl_protocols: 'modern' # intermediate or modern, defines SSL protocol profile.
 st2_ngx_version: 'extras' # extras or standard
 
+
+# ChatOps parameters #
+st2_chatops_hubot_adapter: 'shell' # StackStorm chatops hubot adapter
+
 # Service Mesh #
 environments: 'SIT' # Define the service environment.
 #tags: # Define the service custom label.

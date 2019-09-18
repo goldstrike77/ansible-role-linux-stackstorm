@@ -83,3 +83,13 @@
     - 'st2api.socket'
     - 'st2api.service'
     - 'mistral-api.service'
+
+- name: CLI configuration environment variable.
+  lineinfile:
+    dest: '/etc/profile'
+    state: 'present'
+    line: '{{ item }}'
+  loop:
+    - 'export ST2_API_URL=http://{{ ansible_default_ipv4.address }}:{{ st2_port.api }}'
+    - 'export ST2_AUTH_URL=http://{{ ansible_default_ipv4.address }}:{{ st2_port.auth }}'
+    - 'export ST2_STREAM_URL=http://{{ ansible_default_ipv4.address }}:{{ st2_port.stream }}/v1'

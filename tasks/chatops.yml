@@ -1,0 +1,88 @@
+---
+- name: Waiting for StackStom API ready
+  uri:
+    url: 'http://{{ ansible_default_ipv4.address }}:{{ st2_port.api }}'
+    method: 'GET'
+    return_content: 'yes'
+    status_code: '401'
+    headers:
+      X-Requested-By: '{{ ansible_default_ipv4.address }}'
+      cache-control: 'no-cache'
+  environment:
+    no_proxy: '{{ ansible_default_ipv4.address }}'
+  register: st2_api_status
+  until: st2_api_status.content.find("Unauthorized") != -1
+  retries: 30
+  delay: 3
+
+- name: Generate StackStom authentication token
+  uri:
+    url: 'http://{{ ansible_default_ipv4.address }}:{{ st2_port.auth }}/tokens'
+    method: 'POST'
+    user: '{{ st2_auth_user }}'
+    password: '{{ st2_auth_pass }}'
+    force_basic_auth: 'yes'
+    status_code: '201'
+    headers:
+      X-Requested-By: '{{ ansible_default_ipv4.address }}'
+      cache-control: 'no-cache'
+  environment:
+    no_proxy: '{{ ansible_default_ipv4.address }}'
+  register: st2_auth_token
+  until: st2_auth_token.status == 201
+  no_log: true
+  retries: 5
+  delay: 2
+
+- name: Generate StackStorm API token
+  uri:
+    url: 'http://{{ ansible_default_ipv4.address }}:{{ st2_port.api }}/apikeys'
+    method: 'POST'
+    status_code: '201'
+    headers:
+      X-Auth-Token: '{{ st2_auth_token.json.token }}'
+      X-Requested-By: '{{ ansible_default_ipv4.address }}'
+      cache-control: 'no-cache'
+  environment:
+    no_proxy: '{{ ansible_default_ipv4.address }}'
+  register: st2_api_token
+  until: st2_api_token.status == 201
+  no_log: true
+  retries: 5
+  delay: 2
+  when: st2_auth_token.status == 201
+
+- name: Check ChatOps environment file transfer already
+  stat:
+    path: '/opt/stackstorm/chatops/st2chatops.env.ansible.has.run'
+  register: check_st2chatops_env
+
+- name: StackStorm ChatOps environment file transfer
+  template:
+    src: 'st2chatops.env.j2'
+    dest: '/opt/stackstorm/chatops/st2chatops.env'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  register: st2_chatops_config
+  when:
+    - st2_api_token.status == 201
+    - not check_st2chatops_env.stat.exists | bool
+
+- name: Ensure StackStorm ChatOps environment file transfer status success
+  copy:
+    content: ''
+    dest: '/opt/stackstorm/chatops/st2chatops.env.ansible.has.run'
+    force: 'yes'
+    group: 'root'
+    owner: 'root'
+    mode: '0644'
+  when: st2_chatops_config is changed
+
+- name: Enable StackStorm ChatOps service
+  systemd:
+    name: 'st2chatops.service'
+    enabled: 'yes'
+    state: 'restarted'
+    daemon_reload: 'yes'
+  when: st2_chatops_config is changed
