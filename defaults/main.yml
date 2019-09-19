@@ -50,7 +50,7 @@ st2_pgsql_mailto: 'somebody@example.com' # PostgreSQL report mail recipient.
 st2_pgsql_path: '{{ st2_path }}' # Specify the PostgreSQL data directory.
 st2_pgsql_port: '5432' # PostgreSQL instance communication ports.
 st2_pgsql_sa_pass: 'changeme' # PostgreSQL root account password.
-st2_pgsql_backupset_arg:
+st2_pgsql_backupset_arg: # PostgreSQL backup parameters.
   keep: '2' # The number of full backups (and its incrementals) to keep.
   encryptkey: 'DfqaO09ybWcme77rgoImSVq1UB9PO1al' 
 st2_pgsql_bu_dbs_arg: # StackStorm Database Variables.
@@ -63,8 +63,8 @@ st2_pgsql_bu_dbs_arg: # StackStorm Database Variables.
 
 # RabbitMQ parameters #
 st2_rabbitmq_host: '{{ ansible_default_ipv4.address }}' # RabbitMQ instance communication address.
-st2_rabbitmq_path: '{{ st2_path }}'
-st2_rabbitmq_bu_arg:
+st2_rabbitmq_path: '{{ st2_path }}' # Specify the RabbitMQ data directory.
+st2_rabbitmq_bu_arg: # RabbitMQ authentication variables.
   - vhost: '/'
     user: 'st2'
     pass: 'changeme'
@@ -90,11 +90,10 @@ st2_ngx_pagespeed: true # Enables or disables pagespeed modules.
 st2_ngx_port_http: '80' # NGinx HTTP listen port.
 st2_ngx_port_https: '443' # NGinx HTTPs listen port.
 st2_ngx_ssl_protocols: 'modern' # intermediate or modern, defines SSL protocol profile.
-st2_ngx_version: 'extras' # extras or standard
-
+st2_ngx_version: 'extras' # extras or standard.
 
 # ChatOps parameters #
-st2_chatops_hubot_adapter: 'shell' # StackStorm chatops hubot adapter
+st2_chatops_hubot_adapter: 'shell' # StackStorm ChatOps hubot adapter.
 
 # Service Mesh #
 environments: 'SIT' # Define the service environment.

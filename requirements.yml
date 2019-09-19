@@ -1,0 +1,15 @@
+- name: ansible-role-linux-mongodb
+  src: git+https://github.com/goldstrike77/ansible-role-linux-mongodb
+  version: origin/master
+
+- name: ansible-role-linux-nginx
+  src: git+https://github.com/goldstrike77/ansible-role-linux-nginx
+  version: origin/master
+
+- name: ansible-role-linux-postgresql
+  src: git+https://github.com/goldstrike77/ansible-role-linux-postgresql
+  version: origin/master
+
+- name: ansible-role-linux-rabbitmq
+  src: git+https://github.com/goldstrike77/ansible-role-linux-rabbitmq
+  version: origin/master
