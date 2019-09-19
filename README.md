@@ -122,7 +122,7 @@ There are some variables in defaults/main.yml which can (Or needs to) be overrid
 There are some variables in vars/main.yml:
 
 ## Dependencies
-- Ansible versions > 2.8 are supported.
+- Ansible versions >= 2.8 are supported.
 - [NGinx](https://github.com/goldstrike77/ansible-role-linux-nginx.git)
 - [MongoDB](https://github.com/goldstrike77/ansible-role-linux-mongodb.git)
 - [RabbitMQ](https://github.com/goldstrike77/ansible-role-linux-rabbitmq.git) 
@@ -224,7 +224,7 @@ You can also use the group_vars or the host_vars files for setting the variables
     st2_ngx_version: 'extras'
     st2_chatops_hubot_adapter: 'shell'
     environments: 'SIT'
-    tags: # Define the service custom label.
+    tags:
       subscription: 'default'
       owner: 'nobody'
       department: 'Infrastructure'
