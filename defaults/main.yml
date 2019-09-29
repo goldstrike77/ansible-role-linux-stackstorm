@@ -2,7 +2,6 @@
 # General parameters #
 st2_is_install: false # A boolean value, whether install the StackStorm.
 st2_version: '3.1.0' # Specify the StackStorm version.
-st2_selinux: false # SELinux security policy.
 st2_sys_user: 'stanley' # Define StackStorm system user.
 st2_auth_user: 'st2admin' # File-based authentication username.
 st2_auth_pass: 'changeme' # File-based authentication password.

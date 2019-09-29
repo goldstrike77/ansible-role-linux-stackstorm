@@ -46,7 +46,6 @@ There are some variables in defaults/main.yml which can (Or needs to) be overrid
 
 ##### General parameters
 * `st2_version:` Specify the StackStorm version.
-* `st2_selinux:` SELinux security policy.
 * `st2_sys_user:` Define StackStorm system user.
 * `st2_auth_user:` File-based authentication username.
 * `st2_auth_pass:` File-based authentication password.
@@ -147,7 +146,6 @@ Including an example of how to use your role (for instance, with variables passe
 You can also use the group_vars or the host_vars files for setting the variables needed for this role. File you should change: group_vars/all or host_vars/`group_name`
 
     st2_version: '3.1.0'
-    st2_selinux: false
     st2_sys_user: 'stanley'
     st2_auth_user: 'st2admin'
     st2_auth_pass: 'changeme'
