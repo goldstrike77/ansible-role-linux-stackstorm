@@ -85,11 +85,11 @@ st2_ngx_block_agents: true # Enables or disables block unsafe User Agents.
 st2_ngx_block_string: true # Enables or disables block includes Exploits / File injections / Spam / SQL injections.
 st2_ngx_compress: true # Enables or disables compression.
 st2_ngx_domain: 'st2.example.com' # Defines domain name.
-st2_ngx_pagespeed: true # Enables or disables pagespeed modules.
+st2_ngx_pagespeed: false # Enables or disables pagespeed modules.
 st2_ngx_port_http: '80' # NGinx HTTP listen port.
 st2_ngx_port_https: '443' # NGinx HTTPs listen port.
 st2_ngx_ssl_protocols: 'modern' # intermediate or modern, defines SSL protocol profile.
-st2_ngx_version: 'extras' # extras or standard.
+st2_ngx_version: 'standard' # extras or standard.
 
 # ChatOps parameters #
 st2_chatops_hubot_adapter: 'shell' # StackStorm ChatOps hubot adapter.
